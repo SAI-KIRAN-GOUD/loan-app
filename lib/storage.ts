@@ -12,14 +12,67 @@ import { format, addDays, addWeeks, addMonths, isBefore, isToday, parseISO, star
 
 export const STORAGE_KEY = 'loan_system_data';
 
+const todayStr = format(new Date(), 'yyyy-MM-dd');
+
+const initialInstallments = calculateInstallments(12000, 'Daily', 120, todayStr).installments.map((inst, idx) => {
+  if (idx === 0) {
+    return { ...inst, paid: 120, pending: 0, status: 'Paid' as const };
+  }
+  return inst;
+});
+
 export const DEFAULT_APP_DATA: AppData = {
   credentials: {
     username: 'admin',
     password: 'admin123',
   },
-  customers: [],
-  loans: [],
-  payments: [],
+  customers: [
+    {
+      id: 'CUS-000001',
+      name: 'Sai',
+      phone: '9876543210',
+      fatherName: 'Ramesh',
+      address: 'Plot 12, Jubilee Hills',
+      city: 'Hyderabad',
+      state: 'Telangana',
+      pin: '500033',
+      occupation: 'Business',
+      monthlyIncome: 50000,
+      notes: 'Verified borrower',
+      createdAt: format(new Date(), 'yyyy-MM-dd HH:mm'),
+      status: 'Active',
+    },
+  ],
+  loans: [
+    {
+      id: 'LN-000001',
+      customerId: 'CUS-000001',
+      loanAmount: 10000,
+      repaymentAmount: 12000,
+      repaymentType: 'Daily',
+      installmentAmount: 120,
+      totalInstallments: 100,
+      paidAmount: 120,
+      remainingAmount: 11880,
+      startDate: todayStr,
+      dueDate: format(addDays(new Date(), 99), 'yyyy-MM-dd'),
+      status: 'Active',
+      notes: 'Daily collection loan',
+      createdAt: format(new Date(), 'yyyy-MM-dd HH:mm'),
+      installments: initialInstallments,
+    },
+  ],
+  payments: [
+    {
+      id: 'PAY-000001',
+      loanId: 'LN-000001',
+      customerId: 'CUS-000001',
+      amount: 120,
+      paymentMethod: 'Cash',
+      paymentDate: todayStr,
+      remarks: 'Day 1 initial collection',
+    },
+  ],
   settings: {
     currency: 'INR',
   },
@@ -36,12 +89,22 @@ export function loadAppData(): AppData {
     }
     const parsed = JSON.parse(raw);
 
-    const safeCustomers: Customer[] = (Array.isArray(parsed.customers) ? parsed.customers : []).map((c: any) => ({
+    const parsedCustomers = Array.isArray(parsed.customers) ? parsed.customers : [];
+    const parsedLoans = Array.isArray(parsed.loans) ? parsed.loans : [];
+    const parsedPayments = Array.isArray(parsed.payments) ? parsed.payments : [];
+
+    // If storage has no customers or loans yet, seed default initial data
+    if (parsedCustomers.length === 0 && parsedLoans.length === 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_APP_DATA));
+      return DEFAULT_APP_DATA;
+    }
+
+    const safeCustomers: Customer[] = parsedCustomers.map((c: any) => ({
       ...c,
       status: c.status || 'Active',
     }));
 
-    const safeLoans: Loan[] = (Array.isArray(parsed.loans) ? parsed.loans : []).map((l: any) => ({
+    const safeLoans: Loan[] = parsedLoans.map((l: any) => ({
       ...l,
       installments: Array.isArray(l.installments) ? l.installments : [],
       paidAmount: l.paidAmount ?? 0,
@@ -49,7 +112,7 @@ export function loadAppData(): AppData {
       status: l.status || 'Active',
     }));
 
-    const safePayments: Payment[] = (Array.isArray(parsed.payments) ? parsed.payments : []).map((p: any) => ({
+    const safePayments: Payment[] = parsedPayments.map((p: any) => ({
       ...p,
       amount: p.amount ?? 0,
     }));
