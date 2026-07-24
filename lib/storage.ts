@@ -23,8 +23,8 @@ const initialInstallments = calculateInstallments(12000, 'Daily', 120, todayStr)
 
 export const DEFAULT_APP_DATA: AppData = {
   credentials: {
-    username: 'admin',
-    password: 'admin123',
+    username: 'Shiva',
+    password: 'Shiva@2004',
   },
   customers: [
     {
@@ -117,8 +117,13 @@ export function loadAppData(): AppData {
       amount: p.amount ?? 0,
     }));
 
+    let safeCredentials = parsed.credentials || DEFAULT_APP_DATA.credentials;
+    if (safeCredentials.username === 'admin') {
+      safeCredentials = { username: 'Shiva', password: 'Shiva@2004' };
+    }
+
     return {
-      credentials: parsed.credentials || DEFAULT_APP_DATA.credentials,
+      credentials: safeCredentials,
       customers: safeCustomers,
       loans: safeLoans,
       payments: safePayments,

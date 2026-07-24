@@ -54,8 +54,8 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser. Default login:
-- **Username**: `admin`
-- **Password**: `admin123`
+- **Username**: `Shiva`
+- **Password**: `Shiva@2004`
 
 ---
 

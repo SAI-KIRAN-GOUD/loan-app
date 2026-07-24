@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
-import { Landmark, Lock, User, KeyRound, AlertCircle, Sparkles } from 'lucide-react';
+import { Landmark, Lock, User, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
-  const { login, data } = useApp();
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const { login } = useApp();
+  const [username, setUsername] = useState('Shiva');
+  const [password, setPassword] = useState('Shiva@2004');
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,18 +33,6 @@ export default function LoginPage() {
           </div>
           <h1 className="text-2xl font-extrabold tracking-tight text-white">Loan Management</h1>
           <p className="text-sm text-slate-400">Single Lender Personal Operations Platform</p>
-        </div>
-
-        {/* Default credentials banner */}
-        <div className="p-3.5 bg-blue-950/40 border border-blue-800/40 rounded-2xl text-xs space-y-1">
-          <div className="flex items-center gap-1.5 font-bold text-blue-400">
-            <Sparkles className="w-4 h-4" />
-            <span>Default LocalStorage Credentials</span>
-          </div>
-          <p className="text-slate-300">
-            Username: <code className="bg-slate-900 px-1.5 py-0.5 rounded text-blue-300 font-mono">admin</code> | Password:{' '}
-            <code className="bg-slate-900 px-1.5 py-0.5 rounded text-blue-300 font-mono">{data.credentials.password || 'admin123'}</code>
-          </p>
         </div>
 
         {error && (
