@@ -215,14 +215,20 @@ export const EMICalendar: React.FC<EMICalendarProps> = ({
                     </p>
                   </div>
 
-                  {item.installment.pending > 0 && onCollectPayment && (
-                    <button
-                      onClick={() => onCollectPayment(item.loan.id)}
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow transition"
-                    >
-                      Collect
-                    </button>
-                  )}
+                  {item.installment.pending > 0 && onCollectPayment ? (
+                    item.installment.dueDate <= format(new Date(), 'yyyy-MM-dd') ? (
+                      <button
+                        onClick={() => onCollectPayment(item.loan.id)}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow transition"
+                      >
+                        Collect
+                      </button>
+                    ) : (
+                      <span className="text-[11px] font-semibold text-slate-400 bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
+                        Upcoming
+                      </span>
+                    )
+                  ) : null}
                 </div>
               );
             })}

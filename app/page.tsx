@@ -251,12 +251,9 @@ export default function DashboardPage() {
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-blue-400">{formatCurrency(item.installment.pending)}</p>
-                      <button
-                        onClick={() => openCollectForLoan(item.loan.id)}
-                        className="text-[11px] font-semibold text-emerald-400 hover:underline mt-0.5 block"
-                      >
-                        Collect
-                      </button>
+                      <span className="text-[10px] font-semibold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 mt-1 inline-block">
+                        Due Tomorrow
+                      </span>
                     </div>
                   </div>
                 ))

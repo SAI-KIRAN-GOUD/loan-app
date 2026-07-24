@@ -189,11 +189,11 @@ export function calculateInstallments(
   for (let i = 1; i <= totalInstallments; i++) {
     let nextDueDate: Date;
     if (repaymentType === 'Daily') {
-      nextDueDate = addDays(startDate, i - 1);
+      nextDueDate = addDays(startDate, i);
     } else if (repaymentType === 'Weekly') {
-      nextDueDate = addWeeks(startDate, i - 1);
+      nextDueDate = addWeeks(startDate, i);
     } else {
-      nextDueDate = addMonths(startDate, i - 1);
+      nextDueDate = addMonths(startDate, i);
     }
 
     const currentAmount = i === totalInstallments ? repaymentAmount - accumulated : Math.min(installmentAmount, repaymentAmount - accumulated);

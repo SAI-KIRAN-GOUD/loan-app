@@ -40,9 +40,16 @@ export const CollectPaymentModal: React.FC<CollectPaymentModalProps> = ({
 
   useEffect(() => {
     if (selectedLoan) {
-      // Suggest installment amount as default
-      const defaultPay = Math.min(selectedLoan.installmentAmount, selectedLoan.remainingAmount);
-      setAmount(defaultPay.toString());
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
+      const dueInsts = selectedLoan.installments.filter(
+        (inst) => inst.pending > 0 && inst.dueDate <= todayStr
+      );
+      if (dueInsts.length > 0) {
+        const defaultPay = dueInsts.reduce((sum, inst) => sum + inst.pending, 0);
+        setAmount(defaultPay.toString());
+      } else {
+        setAmount(Math.min(selectedLoan.installmentAmount, selectedLoan.remainingAmount).toString());
+      }
     }
   }, [selectedLoanId]);
 
@@ -145,15 +152,43 @@ export const CollectPaymentModal: React.FC<CollectPaymentModalProps> = ({
             </div>
 
             {selectedLoan && (
-              <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 grid grid-cols-2 gap-2 text-xs">
-                <div>
-                  <span className="text-slate-400">Total Repayment:</span>
-                  <p className="font-semibold text-slate-200">{formatCurrency(selectedLoan.repaymentAmount)}</p>
+              <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 space-y-2 text-xs">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <span className="text-slate-400">Total Repayment:</span>
+                    <p className="font-semibold text-slate-200">{formatCurrency(selectedLoan.repaymentAmount)}</p>
+                  </div>
+                  <div>
+                    <span className="text-slate-400">Current Remaining:</span>
+                    <p className="font-semibold text-amber-400">{formatCurrency(selectedLoan.remainingAmount)}</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-slate-400">Current Remaining:</span>
-                  <p className="font-semibold text-amber-400">{formatCurrency(selectedLoan.remainingAmount)}</p>
-                </div>
+
+                {(() => {
+                  const todayStr = format(new Date(), 'yyyy-MM-dd');
+                  const dueInsts = selectedLoan.installments.filter(
+                    (inst) => inst.pending > 0 && inst.dueDate <= todayStr
+                  );
+                  const firstUpcoming = selectedLoan.installments.find(
+                    (inst) => inst.pending > 0 && inst.dueDate > todayStr
+                  );
+
+                  if (dueInsts.length > 0) {
+                    return (
+                      <p className="text-[11px] font-bold text-amber-400 border-t border-slate-800/80 pt-1.5 flex items-center gap-1">
+                        ⚠️ {dueInsts.length} Installment(s) currently Due Today or Overdue!
+                      </p>
+                    );
+                  }
+                  if (firstUpcoming) {
+                    return (
+                      <p className="text-[11px] font-medium text-blue-400 border-t border-slate-800/80 pt-1.5 flex items-center gap-1">
+                        ℹ️ No installments due today. Next Installment #{firstUpcoming.installmentNo} due on {firstUpcoming.dueDate}
+                      </p>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
             )}
 

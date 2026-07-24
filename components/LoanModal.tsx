@@ -21,13 +21,12 @@ export const LoanModal: React.FC<LoanModalProps> = ({
   const { data, addLoan } = useApp();
 
   const [customerId, setCustomerId] = useState<string>(defaultCustomerId || '');
-  const [loanAmount, setLoanAmount] = useState<string>('10000');
-  const [repaymentAmount, setRepaymentAmount] = useState<string>('12000');
+  const [loanAmount, setLoanAmount] = useState<string>('');
+  const [repaymentAmount, setRepaymentAmount] = useState<string>('');
   const [repaymentType, setRepaymentType] = useState<RepaymentType>('Daily');
-  const [installmentAmount, setInstallmentAmount] = useState<string>('120');
+  const [installmentAmount, setInstallmentAmount] = useState<string>('');
   const [isManualInstallment, setIsManualInstallment] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
-  const [dueDate, setDueDate] = useState<string>(format(addMonths(new Date(), 3), 'yyyy-MM-dd'));
   const [notes, setNotes] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -56,6 +55,9 @@ export const LoanModal: React.FC<LoanModalProps> = ({
   const numInstallment = parseFloat(installmentAmount) || 1;
 
   const schedulePreview = calculateInstallments(numRepayment, repaymentType, numInstallment, startDate);
+  const calculatedDueDate = schedulePreview.installments.length > 0
+    ? schedulePreview.installments[schedulePreview.installments.length - 1].dueDate
+    : startDate;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,7 +91,7 @@ export const LoanModal: React.FC<LoanModalProps> = ({
       installmentAmount: numInstallment,
       totalInstallments: schedulePreview.totalInstallments,
       startDate,
-      dueDate,
+      dueDate: calculatedDueDate,
       notes: notes.trim(),
     });
 
@@ -255,9 +257,9 @@ export const LoanModal: React.FC<LoanModalProps> = ({
                 <div className="relative">
                   <input
                     type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500 transition"
+                    value={calculatedDueDate}
+                    readOnly
+                    className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-amber-400 font-semibold text-sm focus:outline-none cursor-not-allowed"
                     required
                   />
                 </div>
