@@ -25,9 +25,9 @@ export const Sidebar: React.FC = () => {
   const pathname = usePathname();
 
   return (
-    <aside className="w-full lg:w-64 bg-slate-900/50 border-r border-slate-800/80 p-4 flex flex-col justify-between">
-      <div className="space-y-1">
-        <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-3">
+    <aside className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800/80 lg:relative lg:w-64 lg:bg-slate-900/50 lg:border-t-0 lg:border-r lg:border-slate-800/80 lg:p-4 flex lg:flex-col justify-between">
+      <div className="w-full lg:w-auto flex flex-row lg:flex-col justify-around lg:justify-start lg:space-y-1 p-2 lg:p-0">
+        <p className="hidden lg:block px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-3">
           Navigation Menu
         </p>
         {navItems.map((item) => {
@@ -38,20 +38,20 @@ export const Sidebar: React.FC = () => {
               key={item.href}
               href={item.href}
               className={clsx(
-                'flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition',
+                'flex flex-col lg:flex-row items-center gap-1 lg:gap-3 p-2 lg:px-3.5 lg:py-2.5 rounded-xl font-medium text-[10px] lg:text-sm transition flex-1 lg:flex-none justify-center',
                 isActive
-                  ? 'bg-blue-600/15 text-blue-400 border border-blue-500/25 font-semibold'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  ? 'text-blue-400 lg:bg-blue-600/15 lg:border lg:border-blue-500/25 lg:font-semibold'
+                  : 'text-slate-400 hover:text-slate-200 lg:hover:bg-slate-800/50'
               )}
             >
-              <Icon className={clsx('w-5 h-5', isActive ? 'text-blue-400' : 'text-slate-500')} />
+              <Icon className={clsx('w-5 h-5 lg:w-5 lg:h-5', isActive ? 'text-blue-400' : 'text-slate-500')} />
               <span>{item.name}</span>
             </Link>
           );
         })}
       </div>
 
-      <div className="pt-4 border-t border-slate-800/80">
+      <div className="hidden lg:block pt-4 border-t border-slate-800/80">
         <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1">
           <div className="flex items-center gap-2 text-slate-300 font-semibold">
             <Database className="w-4 h-4 text-indigo-400" />

@@ -19,7 +19,7 @@ export const Navbar: React.FC = () => {
             </div>
             <div>
               <h1 className="font-extrabold text-lg tracking-tight text-white flex items-center gap-2">
-                LoanMaster <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">Single Lender</span>
+                LoanMaster <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">Single Lender</span>
               </h1>
               <p className="text-xs text-slate-400">Offline LocalStorage Engine</p>
             </div>

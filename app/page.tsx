@@ -143,25 +143,25 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {cards.map((card, idx) => {
           const Icon = card.icon;
           return (
             <div
               key={idx}
-              className="relative bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg overflow-hidden flex flex-col justify-between hover:border-slate-700 transition group"
+              className="relative bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg overflow-hidden flex flex-col justify-between hover:border-slate-700 transition group"
             >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-slate-400">{card.title}</span>
-                <div className={`p-2.5 rounded-xl bg-gradient-to-br ${card.color} text-white shadow-md`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 sm:mb-3 gap-2 sm:gap-0">
+                <span className="text-[10px] sm:text-xs font-semibold text-slate-400 line-clamp-1">{card.title}</span>
+                <div className={`hidden sm:flex p-2.5 rounded-xl bg-gradient-to-br ${card.color} text-white shadow-md w-fit`}>
                   <Icon className="w-4 h-4" />
                 </div>
               </div>
 
               <div>
-                <div className="text-2xl font-extrabold text-white tracking-tight">{card.value}</div>
-                <div className="mt-2 flex items-center justify-between text-[11px]">
-                  <span className="text-slate-500">{card.badge}</span>
+                <div className="text-lg sm:text-2xl font-extrabold text-white tracking-tight">{card.value}</div>
+                <div className="mt-1 sm:mt-2 flex items-center justify-between text-[9px] sm:text-[11px]">
+                  <span className="text-slate-500 line-clamp-1">{card.badge}</span>
                 </div>
               </div>
             </div>

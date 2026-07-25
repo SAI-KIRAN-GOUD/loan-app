@@ -143,8 +143,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addLoan = (
     loanData: Omit<Loan, 'id' | 'paidAmount' | 'remainingAmount' | 'status' | 'createdAt' | 'installments'> & { installmentAmount: number }
   ) => {
-    if (loanData.repaymentAmount <= loanData.loanAmount) {
-      return { success: false, error: 'Repayment amount must be strictly greater than loan amount.' };
+    if (loanData.repaymentAmount < loanData.loanAmount) {
+      return { success: false, error: 'Repayment amount cannot be less than loan amount.' };
     }
 
     // Generate schedule

@@ -22,10 +22,9 @@ export const LoanModal: React.FC<LoanModalProps> = ({
 
   const [customerId, setCustomerId] = useState<string>(defaultCustomerId || '');
   const [loanAmount, setLoanAmount] = useState<string>('');
-  const [repaymentAmount, setRepaymentAmount] = useState<string>('');
-  const [repaymentType, setRepaymentType] = useState<RepaymentType>('Daily');
+  const [repaymentType, setRepaymentType] = useState<RepaymentType>('Weekly');
   const [installmentAmount, setInstallmentAmount] = useState<string>('');
-  const [isManualInstallment, setIsManualInstallment] = useState<boolean>(false);
+  const [userEditedInstallment, setUserEditedInstallment] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
   const [notes, setNotes] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -38,20 +37,22 @@ export const LoanModal: React.FC<LoanModalProps> = ({
     }
   }, [defaultCustomerId, data.customers]);
 
-  // Recalculate automatic installment amount when loan/repayment changes if not overridden
   useEffect(() => {
-    const rep = parseFloat(repaymentAmount) || 0;
-    if (!isManualInstallment && rep > 0) {
-      let defaultCount = repaymentType === 'Daily' ? 100 : repaymentType === 'Weekly' ? 20 : 6;
-      let calculatedInst = Math.ceil(rep / defaultCount);
-      setInstallmentAmount(calculatedInst.toString());
+    if (userEditedInstallment) return; // Don't override if user manually typed
+    const numLoan = parseFloat(loanAmount) || 0;
+    if (numLoan > 0) {
+      // Calculate: 1000 for every 10k. If less than 10k, default to 1000.
+      const calculated = Math.max(1000, Math.floor(numLoan / 10000) * 1000);
+      setInstallmentAmount(calculated.toString());
+    } else {
+      setInstallmentAmount('');
     }
-  }, [repaymentAmount, repaymentType, isManualInstallment]);
+  }, [loanAmount, userEditedInstallment]);
 
   if (!isOpen) return null;
 
   const numLoan = parseFloat(loanAmount) || 0;
-  const numRepayment = parseFloat(repaymentAmount) || 0;
+  const numRepayment = numLoan; // Repayment equals principal
   const numInstallment = parseFloat(installmentAmount) || 1;
 
   const schedulePreview = calculateInstallments(numRepayment, repaymentType, numInstallment, startDate);
@@ -70,11 +71,6 @@ export const LoanModal: React.FC<LoanModalProps> = ({
 
     if (numLoan <= 0) {
       setError('Loan amount must be greater than zero.');
-      return;
-    }
-
-    if (numRepayment <= numLoan) {
-      setError('Repayment amount must be strictly greater than loan amount.');
       return;
     }
 
@@ -165,24 +161,12 @@ export const LoanModal: React.FC<LoanModalProps> = ({
                   type="number"
                   step="any"
                   value={loanAmount}
-                  onChange={(e) => setLoanAmount(e.target.value)}
+                  onChange={(e) => {
+                    setLoanAmount(e.target.value);
+                    setUserEditedInstallment(false); // reset override when principal changes
+                  }}
                   placeholder="e.g. 10000"
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-semibold placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                  Total Repayment Amount ({data.settings.currency}) <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  value={repaymentAmount}
-                  onChange={(e) => setRepaymentAmount(e.target.value)}
-                  placeholder="e.g. 12000"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-semibold text-emerald-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"
                   required
                 />
               </div>
@@ -205,25 +189,16 @@ export const LoanModal: React.FC<LoanModalProps> = ({
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
-                    Installment Amount ({data.settings.currency})
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setIsManualInstallment(!isManualInstallment)}
-                    className="text-[11px] text-blue-400 hover:underline"
-                  >
-                    {isManualInstallment ? 'Auto Calculate' : 'Manual Override'}
-                  </button>
-                </div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                  Installment Amount ({data.settings.currency}) <span className="text-rose-500">*</span>
+                </label>
                 <input
                   type="number"
                   step="any"
                   value={installmentAmount}
                   onChange={(e) => {
-                    setIsManualInstallment(true);
                     setInstallmentAmount(e.target.value);
+                    setUserEditedInstallment(true);
                   }}
                   placeholder="e.g. 120"
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-semibold placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"
