@@ -32,10 +32,8 @@ export const LoanModal: React.FC<LoanModalProps> = ({
   useEffect(() => {
     if (defaultCustomerId) {
       setCustomerId(defaultCustomerId);
-    } else if (data.customers.length > 0 && !customerId) {
-      setCustomerId(data.customers[0].id);
     }
-  }, [defaultCustomerId, data.customers]);
+  }, [defaultCustomerId]);
 
   useEffect(() => {
     if (userEditedInstallment) return; // Don't override if user manually typed
@@ -144,6 +142,7 @@ export const LoanModal: React.FC<LoanModalProps> = ({
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition"
                 required
               >
+                <option value="" disabled>-- Select Customer --</option>
                 {data.customers.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.id} - {c.name} {c.phone ? `(${c.phone})` : ''}
